@@ -42,7 +42,6 @@ const Hero = styled.div`
 
 // Flexbox container for profile picture
 const ProfileBlock = styled.div`
-  border: 1px red solid;
   height: 30%;
   width: 30%;
   display: flex;
@@ -56,7 +55,6 @@ const ProfileBlock = styled.div`
 
 // Flexbox container for HeadingBlock and ActionBlock
 const DescriptionBlock = styled.div`
-  border: 1px blue solid;
   height: 60%;
   width: 60%;
   ${Down.md`
@@ -72,7 +70,6 @@ const DescriptionBlock = styled.div`
 
 // Flexbox container for Heading
 const HeadingBlock = styled.div`
-  border: 1px solid purple;
   height: 45%;
   display: flex;
   align-items: center;
@@ -80,7 +77,6 @@ const HeadingBlock = styled.div`
 
 // Flexbox container for the Action Button
 const ActionBlock = styled.div`
-  border: 1px solid orange;
   height: 45%;
   display: flex;
   align-items: center;
