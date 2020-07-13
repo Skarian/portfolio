@@ -228,14 +228,16 @@ const Home = () => {
                     const swipeAreaSize =
                       swipeConstraintsRef.current.clientWidth -
                       buttonConstraintsRef.current.clientWidth
-                    if (dragProgress > swipeAreaSize * 0.9) {
+                    if (dragProgress > swipeAreaSize * 0.95) {
                       navigate("/about/")
                     }
                   }}
                   dragTransition={{
-                    x: { type: "spring", stiffness: 100 },
-                    bounceStiffness: 100,
-                    bounceDamping: 10,
+                    x: {
+                      type: "spring",
+                      stiffness: 50,
+                    },
+                    y: "0%",
                   }}
                   dragElastic={0}
                   whileTap={{ cursor: "grabbing" }}
