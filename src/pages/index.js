@@ -1,9 +1,13 @@
-import React from "react"
+import React, { useRef } from "react"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import { Up, Down } from "../styles/media"
-import { Link } from "gatsby"
+import { Link, navigate } from "gatsby"
 import Neil from "../img/neil.png"
+import Animate from "../components/animate"
+import { motion } from "framer-motion"
+
+const wireframes = false
 
 const Background = styled.div`
   position: fixed;
@@ -42,6 +46,7 @@ const Hero = styled.div`
 
 // Flexbox container for profile picture
 const ProfileBlock = styled.div`
+  border: ${wireframes ? "1px red solid;" : "none;"};
   height: 30%;
   width: 30%;
   display: flex;
@@ -55,6 +60,7 @@ const ProfileBlock = styled.div`
 
 // Flexbox container for HeadingBlock and ActionBlock
 const DescriptionBlock = styled.div`
+  border: ${wireframes ? "1px blue solid;" : "none;"};
   height: 60%;
   width: 60%;
   ${Down.md`
@@ -70,6 +76,7 @@ const DescriptionBlock = styled.div`
 
 // Flexbox container for Heading
 const HeadingBlock = styled.div`
+  border: ${wireframes ? "1px purple solid;" : "none;"};
   height: 45%;
   display: flex;
   align-items: center;
@@ -77,6 +84,7 @@ const HeadingBlock = styled.div`
 
 // Flexbox container for the Action Button
 const ActionBlock = styled.div`
+  border: ${wireframes ? "1px orange solid;" : "none;"};
   height: 45%;
   display: flex;
   align-items: center;
@@ -145,13 +153,32 @@ const ActionButton = styled.button`
   text-align: center;
   text-decoration: none;
   outline: none;
+  cursor: grab;
   &:hover {
     background: #00cc8f;
   }
-  &:active {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0);
-    transform: translateY(4px);
-  }
+`
+
+const SwipeArea = styled.div`
+  background: rgba(0, 0, 0, 0.36);
+  border-radius: 0.75em;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  ${Down.md`
+  padding-right: 100px;
+`};
+  ${Up.md`
+  padding-right: 150px;
+`};
+  ${Up.lg`
+  padding-right: 250px;
+`};
+  ${Up.xl`
+  padding-right: 300px;
+`};
 `
 
 const H1 = styled.h1`
@@ -175,23 +202,50 @@ const H1 = styled.h1`
 `
 
 const Home = () => {
+  const swipeConstraintsRef = useRef(null)
+  const buttonConstraintsRef = useRef(null)
+
   return (
     <Layout>
       <Background>
         <Hero>
           <ProfileBlock>
-            <Profile src={Neil} alt="A very handsome brown man" />
+            <Animate>
+              <Profile src={Neil} alt="A very handsome brown man" />
+            </Animate>
           </ProfileBlock>
           <DescriptionBlock>
             <HeadingBlock>
               <Heading>Hi, my name is Neil Skaria</Heading>
             </HeadingBlock>
             <ActionBlock>
-              <Link to="/about/">
-                <ActionButton>
-                  <H1>Learn more</H1>
-                </ActionButton>
-              </Link>
+              <SwipeArea ref={swipeConstraintsRef}>
+                <motion.div
+                  drag="x"
+                  dragConstraints={swipeConstraintsRef}
+                  onDrag={(event, info) => {
+                    const dragProgress = info.point.x
+                    const swipeAreaSize =
+                      swipeConstraintsRef.current.clientWidth -
+                      buttonConstraintsRef.current.clientWidth
+                    if (dragProgress > swipeAreaSize * 0.9) {
+                      navigate("/about/")
+                    }
+                  }}
+                  dragTransition={{
+                    x: { type: "spring", stiffness: 100 },
+                    bounceStiffness: 100,
+                    bounceDamping: 10,
+                  }}
+                  dragElastic={0}
+                  whileTap={{ cursor: "grabbing" }}
+                  drag
+                >
+                  <ActionButton ref={buttonConstraintsRef}>
+                    <H1>Learn more</H1>
+                  </ActionButton>
+                </motion.div>
+              </SwipeArea>
             </ActionBlock>
           </DescriptionBlock>
         </Hero>
