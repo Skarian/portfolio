@@ -1,11 +1,12 @@
-import React, { useRef } from "react"
-import styled from "styled-components"
+import React, { useRef, useState } from "react"
+import styled, { keyframes } from "styled-components"
 import Layout from "../components/layout"
 import { Up, Down } from "../styles/media"
-import { Link, navigate } from "gatsby"
+import { navigate } from "gatsby"
 import Neil from "../img/neil.png"
 import Animate from "../components/animate"
 import { motion } from "framer-motion"
+import Arrow from "../img/arrow.svg"
 
 const wireframes = false
 
@@ -40,7 +41,7 @@ const Hero = styled.div`
   max-height: 500px;
   min-height: 500px;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-evenly;
 `}
 `
 
@@ -64,14 +65,14 @@ const DescriptionBlock = styled.div`
   height: 60%;
   width: 60%;
   ${Down.md`
-  height: 50%;
-  width: 60%;
-  justify-content: flex-start;
+  height: 35%;
+  width: 100%;
+  justify-content: space-around;
   align-items: center;
 `}
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
 `
 
 // Flexbox container for Heading
@@ -85,9 +86,15 @@ const HeadingBlock = styled.div`
 // Flexbox container for the Action Button
 const ActionBlock = styled.div`
   border: ${wireframes ? "1px orange solid;" : "none;"};
-  height: 45%;
   display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 25%;
+  width: 100%;
+  ${Down.md`
+  justify-content: center;
   align-items: center;
+`};
 `
 
 // Profile picture
@@ -143,16 +150,18 @@ const Heading = styled.h1`
 `
 
 // Action Button that leads to the "About me" area
-const ActionButton = styled.button`
+const ActionButton = styled(motion.button)`
   background: #00f5ab;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
   border-radius: 0.75em;
   border: none;
   color: white;
-  padding: 10px 25px;
+  padding: 10px 0px;
   text-align: center;
   text-decoration: none;
   outline: none;
+  width: 25%;
+  height: 100%;
   cursor: grab;
   &:hover {
     background: #00cc8f;
@@ -162,48 +171,84 @@ const ActionButton = styled.button`
 const SwipeArea = styled.div`
   background: rgba(0, 0, 0, 0.36);
   border-radius: 0.75em;
-  border: none;
+  border: ${wireframes ? "1px orange solid;" : "none;"};
   color: white;
   text-align: center;
   text-decoration: none;
   outline: none;
-  ${Down.md`
-  padding-right: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+
+  ${Down.sm`
+  width: 65%;
+`};
+  ${Up.sm`
+  width: 65%;
 `};
   ${Up.md`
-  padding-right: 150px;
+  width: 65%;
 `};
   ${Up.lg`
-  padding-right: 250px;
-`};
-  ${Up.xl`
-  padding-right: 300px;
+  width: 65%;
 `};
 `
+const shine = keyframes`
+to {
+      background-position: 200% center;
+    }
+`
 
-const H1 = styled.h1`
+const SwipeText = styled.h1`
+  flex: 1;
   text-align: center;
-  color: white;
+  background: linear-gradient(
+    to right,
+    #fff 20%,
+    #d4d4d4 40%,
+    #d4d4d4 60%,
+    #fff 80%
+  );
+  background-size: 200% auto;
+  color: #000;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ${shine} 1s linear infinite;
   ${Down.sm`
-  font-size: 18px;
+  font-size: 15px;
 `};
   ${Up.sm`
   font-size: 20px;
 `};
   ${Up.md`
-  font-size: 30px;
+  font-size: 20px;
 `};
   ${Up.lg`
-  font-size: 40px;
+  font-size: 20px;
 `};
   ${Up.xl`
-  font-size: 45px;
+  font-size: 25px;
 `};
+`
+
+const StyledArrow = styled.img`
+  fill: white;
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 `
 
 const Home = () => {
   const swipeConstraintsRef = useRef(null)
   const buttonConstraintsRef = useRef(null)
+  const [slideToUnlockOpacity, setSlideToUnlockOpacity] = useState(1)
 
   return (
     <Layout>
@@ -220,18 +265,24 @@ const Home = () => {
             </HeadingBlock>
             <ActionBlock>
               <SwipeArea ref={swipeConstraintsRef}>
-                <motion.div
+                <ActionButton
+                  ref={buttonConstraintsRef}
                   drag="x"
                   dragConstraints={swipeConstraintsRef}
                   onDrag={(event, info) => {
-                    const dragProgress = info.point.x
-                    const swipeAreaSize =
+                    const scopedDragProgress = info.point.x
+                    const scopedSwipeAreaSize =
                       swipeConstraintsRef.current.clientWidth -
                       buttonConstraintsRef.current.clientWidth
-                    if (dragProgress > swipeAreaSize * 0.95) {
+                    setSlideToUnlockOpacity(
+                      1 - scopedDragProgress / scopedSwipeAreaSize - 0.3
+                    )
+
+                    if (scopedDragProgress > scopedSwipeAreaSize * 0.9) {
                       navigate("/about/")
                     }
                   }}
+                  onDragEnd={() => setSlideToUnlockOpacity(1)}
                   dragTransition={{
                     x: {
                       type: "spring",
@@ -241,12 +292,13 @@ const Home = () => {
                   }}
                   dragElastic={0}
                   whileTap={{ cursor: "grabbing" }}
-                  drag
                 >
-                  <ActionButton ref={buttonConstraintsRef}>
-                    <H1>Learn more</H1>
-                  </ActionButton>
-                </motion.div>
+                  {/* <H1>-></H1> */}
+                  <StyledArrow src={Arrow} />
+                </ActionButton>
+                <SwipeText style={{ opacity: slideToUnlockOpacity }}>
+                  Slide to unlock
+                </SwipeText>
               </SwipeArea>
             </ActionBlock>
           </DescriptionBlock>
