@@ -1,13 +1,10 @@
-import React, { useRef, useState } from "react"
+import React from "react"
 import styled, { keyframes } from "styled-components"
 import Layout from "../components/layout"
 import { Up, Down } from "../styles/media"
-import { navigate } from "gatsby"
 import Neil from "../img/neil.png"
 import Animate from "../components/animate"
-import { motion } from "framer-motion"
-import Arrow from "../img/arrow.svg"
-import usePreciseTimer from "../utils/usePreciseTimer"
+import SwipeToUnlock from "../components/swipeToUnlock"
 
 const wireframes = false
 
@@ -169,121 +166,7 @@ const Heading = styled.h1`
 `};
 `
 
-// Action Button that leads to the "About me" area
-const ActionButton = styled(motion.button)`
-  background: #00f5ab;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-  border-radius: 0.75em;
-  border: none;
-  color: white;
-  padding: 10px 0px;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  width: 25%;
-  height: 100%;
-  cursor: grab;
-  &:active {
-    background: #00cc8f;
-  }
-  &:hover {
-    background: #00cc8f;
-  }
-`
-
-const SwipeArea = styled.div`
-  background: rgba(0, 0, 0, 0.36);
-  border-radius: 0.75em;
-  border: ${wireframes ? "1px orange solid;" : "none;"};
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  height: 100%;
-
-  ${Down.sm`
-  width: 65%;
-`};
-  ${Up.sm`
-  width: 65%;
-`};
-  ${Up.md`
-  width: 65%;
-`};
-  ${Up.lg`
-  width: 65%;
-`};
-`
-const shine = keyframes`
-to {
-      background-position: 200% center;
-    }
-`
-
-const SwipeText = styled.h1`
-  flex: 1;
-  text-align: center;
-  background: linear-gradient(
-    to right,
-    #fff 20%,
-    #d4d4d4 40%,
-    #d4d4d4 60%,
-    #fff 80%
-  );
-  background-size: 200% auto;
-  color: #000;
-  background-clip: text;
-  text-fill-color: transparent;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: ${shine} 1s linear infinite;
-  ${Down.sm`
-  font-size: 15px;
-`};
-  ${Up.sm`
-  font-size: 20px;
-`};
-  ${Up.md`
-  font-size: 20px;
-`};
-  ${Up.lg`
-  font-size: 20px;
-`};
-  ${Up.xl`
-  font-size: 25px;
-`};
-`
-
-const StyledArrow = styled.img`
-  fill: white;
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-`
-
 const Home = () => {
-  const swipeConstraintsRef = useRef(null)
-  const buttonConstraintsRef = useRef(null)
-  const [slideToUnlockOpacity, setSlideToUnlockOpacity] = useState(1)
-  const [needsFadeIn, setNeedsFadeIn] = useState(false)
-
-  if (slideToUnlockOpacity >= 1 && needsFadeIn === true) {
-    setNeedsFadeIn(false)
-  }
-
-  const incrementSlideToUnlockOpacity = () =>
-    setSlideToUnlockOpacity(slideToUnlockOpacity => slideToUnlockOpacity + 0.01)
-  console.log(`Current Opacity: ${slideToUnlockOpacity}`)
-
-  usePreciseTimer(incrementSlideToUnlockOpacity, 10, needsFadeIn)
-
   return (
     <Layout>
       <Background>
@@ -298,43 +181,7 @@ const Home = () => {
               <Heading>Hi, my name is Neil Skaria</Heading>
             </HeadingBlock>
             <ActionBlock>
-              <SwipeArea ref={swipeConstraintsRef}>
-                <ActionButton
-                  ref={buttonConstraintsRef}
-                  drag="x"
-                  dragConstraints={swipeConstraintsRef}
-                  onDrag={(event, info) => {
-                    const scopedDragProgress = info.point.x
-                    const scopedSwipeAreaSize =
-                      swipeConstraintsRef.current.clientWidth -
-                      buttonConstraintsRef.current.clientWidth
-                    const scopedOpacity =
-                      1 - scopedDragProgress / scopedSwipeAreaSize - 0.4
-                    if (scopedOpacity > 0) {
-                      setSlideToUnlockOpacity(scopedOpacity)
-                    }
-
-                    if (scopedDragProgress > scopedSwipeAreaSize * 0.9) {
-                      navigate("/about/")
-                    }
-                  }}
-                  onDragEnd={() => setNeedsFadeIn(true)}
-                  dragTransition={{
-                    x: {
-                      type: "spring",
-                      stiffness: 50,
-                    },
-                    y: "0%",
-                  }}
-                  dragElastic={0}
-                  whileTap={{ cursor: "grabbing" }}
-                >
-                  <StyledArrow src={Arrow} />
-                </ActionButton>
-                <SwipeText style={{ opacity: slideToUnlockOpacity }}>
-                  Slide to unlock
-                </SwipeText>
-              </SwipeArea>
+              <SwipeToUnlock />
             </ActionBlock>
           </DescriptionBlock>
         </Hero>
