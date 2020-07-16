@@ -7,6 +7,7 @@ import Neil from "../img/neil.png"
 import Animate from "../components/animate"
 import { motion } from "framer-motion"
 import Arrow from "../img/arrow.svg"
+import usePreciseTimer from "../utils/usePreciseTimer"
 
 const wireframes = false
 
@@ -120,32 +121,51 @@ const Profile = styled.img`
 `};
 `
 
+const blinkCaret = keyframes`
+from, to { border-color: transparent }
+  50% { border-color: #00f5ab; }
+`
+const typing = keyframes`
+  from { width: 0 }
+  to { width: 100% }
+`
+
 // Heading
 const Heading = styled.h1`
   font-style: normal;
   font-weight: bold;
-  line-height: 59px;
+  line-height: 100px;
   color: #ffffff;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  white-space: nowrap;
+  /* //New Stuff */
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: 0.15em solid #00f5ab; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  animation: ${typing} 3.5s steps(40, end),
+    ${blinkCaret} 0.75s step-end infinite;
   ${Down.md`
   text-align: center;
   self-align: flex-start;
 `};
   ${Down.sm`
   font-size: 20px;
+  line-height: 25px;
 `};
   ${Up.sm`
   font-size: 25px;
+  line-height: 30px;
 `};
   ${Up.md`
   font-size: 35px;
+  line-height: 40px;
 `};
   ${Up.lg`
   font-size: 45px;
+  line-height: 50px;
 `};
   ${Up.xl`
   font-size: 70px;
+  line-height: 80px;
 `};
 `
 
@@ -163,6 +183,9 @@ const ActionButton = styled(motion.button)`
   width: 25%;
   height: 100%;
   cursor: grab;
+  &:active {
+    background: #00cc8f;
+  }
   &:hover {
     background: #00cc8f;
   }
@@ -249,6 +272,17 @@ const Home = () => {
   const swipeConstraintsRef = useRef(null)
   const buttonConstraintsRef = useRef(null)
   const [slideToUnlockOpacity, setSlideToUnlockOpacity] = useState(1)
+  const [needsFadeIn, setNeedsFadeIn] = useState(false)
+
+  if (slideToUnlockOpacity >= 1 && needsFadeIn === true) {
+    setNeedsFadeIn(false)
+  }
+
+  const incrementSlideToUnlockOpacity = () =>
+    setSlideToUnlockOpacity(slideToUnlockOpacity => slideToUnlockOpacity + 0.01)
+  console.log(`Current Opacity: ${slideToUnlockOpacity}`)
+
+  usePreciseTimer(incrementSlideToUnlockOpacity, 10, needsFadeIn)
 
   return (
     <Layout>
@@ -274,15 +308,17 @@ const Home = () => {
                     const scopedSwipeAreaSize =
                       swipeConstraintsRef.current.clientWidth -
                       buttonConstraintsRef.current.clientWidth
-                    setSlideToUnlockOpacity(
-                      1 - scopedDragProgress / scopedSwipeAreaSize - 0.3
-                    )
+                    const scopedOpacity =
+                      1 - scopedDragProgress / scopedSwipeAreaSize - 0.4
+                    if (scopedOpacity > 0) {
+                      setSlideToUnlockOpacity(scopedOpacity)
+                    }
 
                     if (scopedDragProgress > scopedSwipeAreaSize * 0.9) {
                       navigate("/about/")
                     }
                   }}
-                  onDragEnd={() => setSlideToUnlockOpacity(1)}
+                  onDragEnd={() => setNeedsFadeIn(true)}
                   dragTransition={{
                     x: {
                       type: "spring",
@@ -293,7 +329,6 @@ const Home = () => {
                   dragElastic={0}
                   whileTap={{ cursor: "grabbing" }}
                 >
-                  {/* <H1>-></H1> */}
                   <StyledArrow src={Arrow} />
                 </ActionButton>
                 <SwipeText style={{ opacity: slideToUnlockOpacity }}>
