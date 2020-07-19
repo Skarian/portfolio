@@ -30,7 +30,7 @@ const ActionButton = styled(motion.button)`
   }
 `
 
-const SwipeArea = styled.div`
+const SwipeArea = styled(motion.div)`
   background: rgba(0, 0, 0, 0.36);
   border-radius: 0.75em;
   border: ${wireframes ? "1px orange solid;" : "none;"};
@@ -134,19 +134,26 @@ const SwipeToUnlock = () => {
   usePreciseTimer(incrementSlideToUnlockOpacity, 10, needsFadeIn)
 
   return (
-    <SwipeArea ref={swipeConstraintsRef}>
+    <SwipeArea
+      ref={swipeConstraintsRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <ActionButton
         ref={buttonConstraintsRef}
         drag="x"
         dragConstraints={swipeConstraintsRef}
         onDrag={(event, info) => {
           const scopedDragProgress = info.point.x
+          const scopedSwipeAreaSize =
+            swipeConstraintsRef.current.clientWidth -
+            buttonConstraintsRef.current.clientWidth
           setDragProgress(scopedDragProgress)
           if (dragProgress > 1) {
             setSlideToUnlockOpacity(1 - dragProgress / swipeAreaSize - 0.4)
           }
 
-          if (dragProgress > swipeAreaSize * 0.9) {
+          if (scopedDragProgress > scopedSwipeAreaSize * 0.9) {
             navigate("/about/")
           }
         }}

@@ -2,13 +2,18 @@ import React from "react"
 import PropTypes from "prop-types"
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
+import styled from "styled-components"
+
+const StyledDiv = styled(motion.div)`
+  display: inherit;
+`
 
 const Animate = ({ children, repeat, button }) => {
   const [ref, inView] = useInView({
     triggerOnce: !repeat,
   })
   return (
-    <motion.div
+    <StyledDiv
       ref={ref}
       animate={{
         scale: inView ? 1 : 0,
@@ -29,7 +34,7 @@ const Animate = ({ children, repeat, button }) => {
       }}
     >
       {children}
-    </motion.div>
+    </StyledDiv>
   )
 }
 

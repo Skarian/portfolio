@@ -5,6 +5,7 @@ import { Up, Down } from "../styles/media"
 import Neil from "../img/neil.png"
 import Animate from "../components/animate"
 import SwipeToUnlock from "../components/swipeToUnlock"
+import useWindowSize from "../utils/useWindowSize"
 
 const wireframes = false
 
@@ -167,6 +168,8 @@ const Heading = styled.h1`
 `
 
 const Home = () => {
+  const windowSize = useWindowSize()
+  console.log(windowSize)
   return (
     <Layout>
       <Background>
