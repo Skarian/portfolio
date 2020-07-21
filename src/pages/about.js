@@ -39,8 +39,8 @@ const About = () => {
             description="A list of my skills, knowledge, and capabilities"
             bgColor="#6ccff6"
             imgSrc={AboutMeIMG}
-            route="/"
           />
+
           <AboutCard
             heading="Projects"
             description="Take a look at some things I work on outside the day job"
@@ -54,6 +54,7 @@ const About = () => {
             description="A place to store my thoughts, ideas, and contemplations"
             bgColor="#00F5AB"
             imgSrc={BlogIMG}
+            externalLink="https://blog.neilskaria.com"
           />
           <AboutCard
             heading="Connect"

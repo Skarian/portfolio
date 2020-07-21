@@ -92,21 +92,35 @@ const Image = styled.img`
   -webkit-user-select: none;
   -ms-user-select: none;
 `
+const A = styled.a`
+  text-decoration: none;
+`
 
-const AboutCard = ({ heading, description, bgColor, imgSrc, route }) => {
+const AboutCard = ({
+  heading,
+  description,
+  bgColor,
+  imgSrc,
+  route,
+  externalLink,
+}) => {
   return (
     <Animate button>
-      <AboutMeCard
-        style={{ background: `${bgColor}` }}
-        onClick={() => {
-          console.log("It has been clicked")
-          navigate(`${route}`)
-        }}
-      >
-        <H1>{heading}</H1>
-        <Description>{description}</Description>
-        <Image src={imgSrc} />
-      </AboutMeCard>
+      <A href={externalLink}>
+        <AboutMeCard
+          style={{ background: `${bgColor}` }}
+          onClick={() => {
+            console.log("It has been clicked")
+            if (route) {
+              navigate(`${route}`)
+            }
+          }}
+        >
+          <H1>{heading}</H1>
+          <Description>{description}</Description>
+          <Image src={imgSrc} />
+        </AboutMeCard>
+      </A>
     </Animate>
   )
 }
@@ -116,14 +130,13 @@ AboutCard.propTypes = {
   description: PropTypes.string.isRequired,
   bgColor: PropTypes.string.isRequired,
   imgSrc: PropTypes.string,
-  route: PropTypes.string.isRequired,
+  route: PropTypes.string,
 }
 
 AboutCard.defaultProps = {
   heading: "Default heading",
   description: "Default description",
   bgColor: "#fff",
-  route: "/",
 }
 
 export default AboutCard
