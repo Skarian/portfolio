@@ -20,6 +20,7 @@ const AboutMeCard = styled.div`
   justify-content: space-evenly;
   padding-left: 12.5%;
   padding-right: 12.5%;
+  cursor: pointer;
   ${Down.md`
   padding-left: 5%;
   padding-right: 5%;
@@ -85,6 +86,7 @@ const Description = styled.h3`
 const Image = styled.img`
   align-self: center;
   width: 75%;
+  width: 200px;
   user-drag: none;
   user-select: none;
   -moz-user-select: none;

@@ -154,7 +154,7 @@ const SwipeToUnlock = () => {
           }
 
           if (scopedDragProgress > scopedSwipeAreaSize * 0.9) {
-            navigate("/about/")
+            navigate("/directory/")
           }
         }}
         onDragEnd={() => {
