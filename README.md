@@ -1,3 +1,10 @@
 # portfolio
 
-This is the portfolio file now, muahahahaha Testing out adding thigns here.
+This site serves as a landing page for my portfolio, side projects, interests, etcetera.
+
+Built using the following:
+
+- React
+- Gatsby
+- Styled-components
+- Framer-motion
